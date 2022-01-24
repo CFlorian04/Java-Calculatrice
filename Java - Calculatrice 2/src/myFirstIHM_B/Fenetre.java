@@ -88,13 +88,16 @@ public class Fenetre extends JFrame implements ActionListener {
 		this.setVisible(true);
 	}
 
-	String affichage_calc = new String();
-	ArrayList<String> tab_nombre = new ArrayList<String>();
-	ArrayList<Character> tab_signe = new ArrayList<Character>();
-	String tamp_nombre = new String();
-	String resultat = new String();
-	boolean dejacalc = false, avantnb = true;
-	int j=0;
+	String affichage_calc = new String(); //Affichage du calcul sur la calculatrice
+	ArrayList<String> tab_nombre = new ArrayList<String>(); //Stock les nombres du calcul
+	ArrayList<Character> tab_signe = new ArrayList<Character>(); //Stock les symboles du calcul
+	String tamp_nombre = new String(); //Stock un nombre de calcul
+	String resultat = new String(); //Récupère la valeur du résultat
+	boolean dejacalc = false; //Si le calcul a déja été fait
+	boolean avantnb = true; //Si il y a un nombre avant
+	int j = 0;
+
+
 
 	public void actionPerformed(ActionEvent e){
 		//récupère la valeur du bouton
@@ -109,23 +112,37 @@ public class Fenetre extends JFrame implements ActionListener {
 			dejacalc = false;
 		}
 
-		if( 48 <= (int) cara && (int) cara <= 57 || (int) cara == 45)
+		if( 48 <= (int) cara && (int) cara <= 57)
 		{
-
-			if(avantnb == true && (int) cara == 45)
+			tamp_nombre += cara;
+			affichage_calc += cara;
+			txt_calc.setText(affichage_calc);
+			avantnb = true;
+		}
+		else if ((int) cara == 45 || (int) cara == 43) // 45 = '-' et 43 = '+'
+		{
+			if(avantnb == true)
 			{
 				tab_signe.add(cara);
 				tab_nombre.add(tamp_nombre);
 				tamp_nombre = "";
 			}
-			else
+			else if(avantnb == false && (int) cara == 45)
+			{
 				tamp_nombre += cara;
-
+			}
+			else if((int) cara == 43)
+			{
+				tab_signe.add(cara);
+				tab_nombre.add(tamp_nombre);
+				tamp_nombre = "";
+			}
 			affichage_calc += cara;
 			txt_calc.setText(affichage_calc);
-			avantnb = true;
+
+			avantnb = false;
 		}
-		else if( 42 <= (int) cara && (int) cara <= 47 && (int) cara != 45)
+		else if( 42 == (int) cara || (int) cara == 47)
 		{
 			tab_signe.add(cara);
 			tab_nombre.add(tamp_nombre);
@@ -136,26 +153,139 @@ public class Fenetre extends JFrame implements ActionListener {
 
 			avantnb = false;
 			j++;
-
-			System.out.println("Nombres ->" + Arrays.deepToString(tab_nombre.toArray()) + " | Signes ->" + Arrays.deepToString(tab_signe.toArray()));
 		}
 		else if( cara == 'c' )
 		{
 			tamp_nombre = "";
-			affichage_calc = "";
-			txt_calc.setText(affichage_calc);
+			txt_calc.setText("");
+			txt_rep.setText("");
+			tab_signe.clear();
+			tab_nombre.clear();
 		}
 		else if( cara == '=' )
 		{
 			tab_nombre.add(tamp_nombre);
 			tamp_nombre = "";
+			System.out.println("Calcul -> " + affichage_calc);
 
 			affichage_calc += cara;
 			txt_calc.setText(affichage_calc);
 
 			dejacalc = true;
-
 			System.out.println("Nombres ->" + Arrays.deepToString(tab_nombre.toArray()) + " | Signes ->" + Arrays.deepToString(tab_signe.toArray()));
+
+			int signe_size = tab_signe.size();
+
+			if(signe_size==0)
+			{
+				resultat = tab_nombre.get(0);
+				txt_rep.setText(resultat);
+			}
+
+			for (int i = 0; i<signe_size; i++)
+			{
+				float nb1 = 0, nb2 = 0, tamp_res = 0;
+
+
+				if(tab_signe.indexOf('*') != -1 && tab_signe.indexOf('/') != -1)
+				{
+					if(tab_signe.indexOf('*') < tab_signe.indexOf('/'))
+					{
+						nb1 = Float.parseFloat(tab_nombre.get(tab_signe.indexOf('*')));
+						nb2 = Float.parseFloat(tab_nombre.get(tab_signe.indexOf('*')+1+i));
+						tamp_res = nb1 * nb2;
+
+						tab_nombre.add(tab_signe.indexOf('*'), String.valueOf(tamp_res));
+						tab_nombre.remove(tab_signe.indexOf('*')+1);
+						tab_signe.remove(tab_signe.indexOf('*'));
+					}
+					else if(tab_signe.indexOf('*') > tab_signe.indexOf('/'))
+					{
+						nb1 = Float.parseFloat(tab_nombre.get(tab_signe.indexOf('/')));
+						nb2 = Float.parseFloat(tab_nombre.get(tab_signe.indexOf('/')+1+i));
+						tamp_res = nb1 / nb2;
+
+						tab_nombre.add(tab_signe.indexOf('/'), String.valueOf(tamp_res));
+						tab_nombre.remove(tab_signe.indexOf('/')+1);
+						tab_signe.remove(tab_signe.indexOf('/'));
+					}
+				}
+				else if(tab_signe.indexOf('*') != -1 && tab_signe.indexOf('/') == -1)
+				{
+					nb1 = Float.parseFloat(tab_nombre.get(tab_signe.indexOf('*')));
+					nb2 = Float.parseFloat(tab_nombre.get(tab_signe.indexOf('*')+1+i));
+					tamp_res = nb1 * nb2;
+
+					tab_nombre.add(tab_signe.indexOf('*'), String.valueOf(tamp_res));
+					tab_nombre.remove(tab_signe.indexOf('*')+1);
+					tab_signe.remove(tab_signe.indexOf('*'));
+				}
+				else if(tab_signe.indexOf('*') == -1 && tab_signe.indexOf('/') != -1)
+				{
+					nb1 = Float.parseFloat(tab_nombre.get(tab_signe.indexOf('/')));
+					nb2 = Float.parseFloat(tab_nombre.get(tab_signe.indexOf('/')+1+i));
+					tamp_res = nb1 / nb2;
+
+					tab_nombre.add(tab_signe.indexOf('/'), String.valueOf(tamp_res));
+					tab_nombre.remove(tab_signe.indexOf('/')+1);
+					tab_signe.remove(tab_signe.indexOf('/'));
+				}
+				else if(tab_signe.indexOf('+') != -1 && tab_signe.indexOf('-') != -1)
+				{
+					if(tab_signe.indexOf('+') < tab_signe.indexOf('-'))
+					{
+						nb1 = Float.parseFloat(tab_nombre.get(tab_signe.indexOf('+')));
+						nb2 = Float.parseFloat(tab_nombre.get(tab_signe.indexOf('+')+1+i));
+						tamp_res = nb1 + nb2;
+
+						tab_nombre.add(tab_signe.indexOf('+'), String.valueOf(tamp_res));
+						tab_nombre.remove(tab_signe.indexOf('+')+1);
+						tab_signe.remove(tab_signe.indexOf('+'));
+					}
+					else if(tab_signe.indexOf('+') > tab_signe.indexOf('-'))
+					{
+						nb1 = Float.parseFloat(tab_nombre.get(tab_signe.indexOf('-')));
+						nb2 = Float.parseFloat(tab_nombre.get(tab_signe.indexOf('-')+1+i));
+						tamp_res = nb1 - nb2;
+
+						tab_nombre.add(tab_signe.indexOf('-'), String.valueOf(tamp_res));
+						tab_nombre.remove(tab_signe.indexOf('-')+1);
+						tab_signe.remove(tab_signe.indexOf('-'));
+					}
+				}
+				else if(tab_signe.indexOf('+') != -1 && tab_signe.indexOf('-') == -1)
+				{
+					nb1 = Float.parseFloat(tab_nombre.get(tab_signe.indexOf('+')));
+					nb2 = Float.parseFloat(tab_nombre.get(tab_signe.indexOf('+')+1+i));
+					tamp_res = nb1 + nb2;
+
+					tab_nombre.add(tab_signe.indexOf('+'), String.valueOf(tamp_res));
+					tab_nombre.remove(tab_signe.indexOf('+')+1);
+					tab_signe.remove(tab_signe.indexOf('+'));
+				}
+				else if(tab_signe.indexOf('+') == -1 && tab_signe.indexOf('-') != -1)
+				{
+					nb1 = Float.parseFloat(tab_nombre.get(tab_signe.indexOf('-')));
+					nb2 = Float.parseFloat(tab_nombre.get(tab_signe.indexOf('-')+1+i));
+					tamp_res = nb1 - nb2;
+
+					tab_nombre.add(tab_signe.indexOf('-'), String.valueOf(tamp_res));
+					tab_nombre.remove(tab_signe.indexOf('-')+1);
+					tab_signe.remove(tab_signe.indexOf('-'));
+				}
+
+				System.out.println("nb1 = " + nb1 + " / nb2 = " + nb2);
+				System.out.println("résultat = " + tamp_res);
+
+				resultat = String.valueOf(tamp_res);
+				txt_rep.setText(resultat);
+
+
+
+			}
+
+			tab_signe.clear();
+			tab_nombre.clear();
 		}
 
 
