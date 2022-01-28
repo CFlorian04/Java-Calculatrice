@@ -46,6 +46,11 @@ public class Fenetre extends JFrame implements ActionListener {
 
 		//---------------------------BOUTONS-------------------------------//
 
+
+
+		//Mettre les boutons en meilleur affichage et le = en 4 cases
+
+
 		//dimension boutons
 		Dimension dim = new Dimension(50,50);
 		char txt_b[] = new char[] {'7','8','9','4','5','6','1','2','3','0',',','c'};
