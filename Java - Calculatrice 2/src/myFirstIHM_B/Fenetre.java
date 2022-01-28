@@ -144,22 +144,17 @@ public class Fenetre extends JFrame implements ActionListener {
         } else if ( cara == 'C' ) {
             isClear();
         } else if ( cara == '=' ) {
-            tab_nombre.add(tamp_nombre);
-            tamp_nombre = "";
-            System.out.println('\n' + "Calcul -> " + affichage_calc);
 
-            affichage_calc += " " + cara;
-            txt_calc.setText(affichage_calc);
-            dejacalc = true;
+            isEqual();
 
-            float final_resultat = 0;
             float nb1 = 0, nb2 = 0, tamp_res = 0;
 
             while (tab_signe.size() > 0) {
                 int placefois = tab_signe.indexOf('x'), placeplus = tab_signe.indexOf('+'), placemoins = tab_signe.indexOf('-'), placediv = tab_signe.indexOf('/');
                 int apfois = placefois + 1, applus = placeplus + 1, apmoins = placemoins + 1, apdiv = placediv + 1;
 
-                System.out.println("Nombres ->" + Arrays.deepToString(tab_nombre.toArray()) + " | Signes ->" + Arrays.deepToString(tab_signe.toArray()));
+
+                System.out.println("Nombres -> " + Arrays.deepToString(tab_nombre.toArray()) + " | Signes -> " + Arrays.deepToString(tab_signe.toArray()));
                 if ( placefois != -1 && placediv != -1 ) {
                     if ( placefois < placediv )                     {tamp_res = calculTask(placefois, apfois, '*');}
                     else if ( placefois > placediv )                {tamp_res = calculTask(placediv, apdiv, '/');}
@@ -181,7 +176,7 @@ public class Fenetre extends JFrame implements ActionListener {
             else
                 resultat = String.valueOf(tamp_res);
 
-            System.out.println("résultat = " + resultat);
+            System.out.println("Résultat = " + resultat);
             txt_rep.setText(resultat);
             tab_signe.clear();
             tab_nombre.clear();
@@ -231,6 +226,19 @@ public class Fenetre extends JFrame implements ActionListener {
         tab_nombre.clear();
     }
 
+    public void isEqual()
+    {
+        tab_nombre.add(tamp_nombre);
+        tamp_nombre = "";
+        System.out.println('\n' + "///////////////////////////////////");
+        System.out.println("CALCUL -> " + affichage_calc);
+
+
+        affichage_calc += " =";
+        txt_calc.setText(affichage_calc);
+        dejacalc = true;
+    }
+
     public float calculTask(int place, int fPlace, char signe) {
         float nb1 = Float.parseFloat(tab_nombre.get(place));
         float nb2 = Float.parseFloat(tab_nombre.get(fPlace));
@@ -251,12 +259,9 @@ public class Fenetre extends JFrame implements ActionListener {
             case '/':
                 task_res = nb1 / nb2;
                 break;
-
-            default:
-                task_res = 0;
-                break;
         }
-        System.out.println("nb1 = " + nb1 + " / nb2 = " + nb2);
+        System.out.println("Task -> " + nb1 + " " + signe + " " + nb2 + " = " + task_res);
+        System.out.println("-----------------------------------");
         tab_nombre.set(place, String.valueOf(task_res));
         tab_nombre.remove(fPlace);
         tab_signe.remove(place);
