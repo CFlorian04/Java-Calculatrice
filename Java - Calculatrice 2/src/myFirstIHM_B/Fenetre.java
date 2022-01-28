@@ -12,11 +12,13 @@ import javax.swing.*;
 
 public class Fenetre extends JFrame implements ActionListener {
 
-	private JPanel myPanelPrincipal;
-	private BorderLayout myBorderLayout;
-	private JPanel panelSud;
-	private JPanel panelNord;
-	private JPanel panelCentre;
+	private JPanel myPrincipal;
+	private JPanel myPanelScreen;
+	private JPanel myPrincipalPanel;
+
+	private JPanel panelChiffre;
+	private JPanel panelSigne;
+	private JPanel panelResultat;
 
 	private JButton [] calc_button;
 	private JLabel txt_calc, txt_rep;
@@ -25,68 +27,112 @@ public class Fenetre extends JFrame implements ActionListener {
 
 
 	public Fenetre(){
+
+		this.setResizable(false);
+		//---------------------------CONTENEURS-------------------------------//
+
 		//création des conteneurs
-		myPanelPrincipal	= new JPanel();
-		myBorderLayout 		= new BorderLayout();
-		panelNord			= new JPanel();
-		panelCentre			= new JPanel();
-		panelSud			= new JPanel();
+
+		myPrincipalPanel	= new JPanel();
+
+		panelResultat		= new JPanel();
+		panelChiffre		= new JPanel();
+		panelSigne			= new JPanel();
+
 		txt_calc			= new JLabel("");
 		txt_rep				= new JLabel("");
 		back_calc = "";
 
 
+		//---------------------------BOUTONS-------------------------------//
+
 		//dimension boutons
 		Dimension dim = new Dimension(50,50);
-		Dimension dimtxt = new Dimension(250,50);
-		char txt_b[] = new char[] {'7','8','9','/','4','5','6','*','1','2','3','-','0','c','=','+'};
+		char txt_b[] = new char[] {'7','8','9','4','5','6','1','2','3','0',',','c'};
+		char txt_s[] = new char[] {'/','*','-','+','='};
 		length_tab = txt_b.length;
 		JButton calc_button [] = new JButton[txt_b.length];
 
 		for (int i = 0; i<txt_b.length;i++)
 		{
 			calc_button[i] = new JButton(""+txt_b[i]);
+			calc_button[i].setBackground(Color.WHITE);
 			calc_button[i].setFont(new Font("Verdana", Font.PLAIN, 15));
+			calc_button[i].setBorder(BorderFactory.createLineBorder(Color.lightGray,1));
+			calc_button[i].setForeground(Color.BLACK);
 			calc_button[i].setPreferredSize(dim);
 			calc_button[i].addActionListener(this);
-			panelSud.add(calc_button[i]);
+			panelChiffre.add(calc_button[i]);
 		}
 
-		// Configuration du panelSud
-		panelSud.setPreferredSize(new Dimension(250,240));
+		for (int i = 0; i<3;i++)
+		{
+			calc_button[i] = new JButton("");
+			calc_button[i].setPreferredSize(dim);
+			panelChiffre.add(calc_button[i]);
+			calc_button[i].setVisible(false);
+		}
 
+		for (int i = 0; i<txt_s.length;i++)
+		{
+			calc_button[i] = new JButton(""+txt_s[i]);
+			calc_button[i].setBackground(Color.WHITE);
+			calc_button[i].setFont(new Font("Verdana", Font.PLAIN, 15));
+			calc_button[i].setBorder(BorderFactory.createLineBorder(Color.lightGray,1));
+			calc_button[i].setForeground(Color.BLACK);
+			calc_button[i].setPreferredSize(dim);
+			calc_button[i].addActionListener(this);
+			panelSigne.add(calc_button[i]);
+		}
 
-		//Configuration du panelNord
-		panelCentre.setBackground(Color.WHITE);
-		panelCentre.add(txt_rep);
+		//---------------------------TEXTES/JLABELS-------------------------------//
+
+		Dimension dimtxt = new Dimension(250,50);
+		//txt_rep
 		txt_rep.setFont(new Font("Verdana", Font.BOLD, 20));
 		txt_rep.setMinimumSize(dimtxt);
 		txt_rep.setMaximumSize(dimtxt);
-		panelCentre.setPreferredSize(new Dimension(250,50));
-
-		//Configuration du panelCentre
-		panelNord.setBackground(Color.WHITE);
-		panelNord.add(txt_calc);
+		//txt_calc
+		txt_calc.setFont(new Font("Verdana", Font.PLAIN, 25));
 		txt_calc.setMinimumSize(dimtxt);
 		txt_calc.setMaximumSize(dimtxt);
-		txt_calc.setFont(new Font("Verdana", Font.PLAIN, 25));
-		panelNord.setPreferredSize(new Dimension(250,50));
+
+		//---------------------------CONFIGURATIONS JPANELS-------------------------------//
+
+		// Configuration du panelSigne
+		panelSigne.setPreferredSize(new Dimension(70,280));
+
+		// Configuration du panelChiffre
+		panelChiffre.setPreferredSize(new Dimension(170,280));
+
+		//Configuration du panelResultat
+		panelResultat.add(txt_rep);
+		panelResultat.add(txt_calc);
+		panelResultat.setPreferredSize(new Dimension(300,100));
+		panelResultat.setBackground(Color.GRAY);
 
 
-		// Configuration du conteneur JPanel principal		
-		myPanelPrincipal.setLayout(myBorderLayout);
-		myPanelPrincipal.add(panelNord,BorderLayout.NORTH);
-		myPanelPrincipal.add(panelCentre,BorderLayout.CENTER);
-		myPanelPrincipal.add(panelSud,BorderLayout.SOUTH);
-		
+		// Configuration du conteneur myPrincipalPanel
+		myPrincipalPanel.add(panelResultat,BorderLayout.NORTH);
+		myPrincipalPanel.add(panelResultat,BorderLayout.CENTER);
+		myPrincipalPanel.add(panelChiffre,BorderLayout.WEST);
+		myPrincipalPanel.add(panelSigne,BorderLayout.EAST);
+
+
+
+
+		//---------------------------CONFIGURATION FENETRE-------------------------------//
+
 		// Configuration de la Fenetre
 		this.setTitle("Calculatrice");
-		this.setContentPane(myPanelPrincipal);
+		this.setContentPane(myPrincipalPanel);
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
-		this.setSize(250, 400);
+		this.setSize(300, 450);
 		this.setLocationRelativeTo(null);
 		this.setVisible(true);
 	}
+
+	//---------------------------VARIABLES GLOBALES-------------------------------//
 
 	String affichage_calc = new String(); //Affichage du calcul sur la calculatrice
 	ArrayList<String> tab_nombre = new ArrayList<String>(); //Stock les nombres du calcul
@@ -165,7 +211,7 @@ public class Fenetre extends JFrame implements ActionListener {
 		}
 		else if( cara == '=' )
 		{
-			tab_nombre.add(tamp_nombre);
+			tab_nombre.add(' '+tamp_nombre);
 			tamp_nombre = "";
 			System.out.println('\n' + "Calcul -> " + affichage_calc);
 
@@ -173,10 +219,7 @@ public class Fenetre extends JFrame implements ActionListener {
 			txt_calc.setText(affichage_calc);
 
 			dejacalc = true;
-
 			int signe_size = tab_signe.size();
-
-
 
 			if(signe_size==0)
 			{
@@ -192,29 +235,54 @@ public class Fenetre extends JFrame implements ActionListener {
 				System.out.println("Nombres ->" + Arrays.deepToString(tab_nombre.toArray()) + " | Signes ->" + Arrays.deepToString(tab_signe.toArray()));
 
 				float nb1 = 0, nb2 = 0, tamp_res = 0;
-				System.out.println("placefois = " + placefois + " placeplus = " + placeplus + " placediv = " + placediv + " placemoins = " + placemoins);
-				System.out.println("apfois = " + apfois + " applus = " + applus + " apdiv = " + apdiv + " apmoins = " + apmoins);
+				//System.out.println("placefois = " + placefois + " placeplus = " + placeplus + " placediv = " + placediv + " placemoins = " + placemoins);
+				//System.out.println("apfois = " + apfois + " applus = " + applus + " apdiv = " + apdiv + " apmoins = " + apmoins);
 
-				if(placefois != -1)
+
+				if(placefois != -1 && placediv != -1)
+				{
+					if(placefois < placediv)
+					{
+						nb1 = Float.parseFloat(tab_nombre.get(placefois));
+						nb2 = Float.parseFloat(tab_nombre.get(apfois));
+						tamp_res = nb1 * nb2;
+						System.out.println("nb1 = " + nb1 + " / nb2 = " + nb2);
+
+						tab_nombre.set(placefois, String.valueOf(tamp_res));
+						tab_nombre.remove(apfois);
+						tab_signe.remove(placefois);
+					}
+					else if(placefois > placediv)
+					{
+						nb1 = Float.parseFloat(tab_nombre.get(placediv));
+						nb2 = Float.parseFloat(tab_nombre.get(apdiv));
+						tamp_res = nb1 / nb2;
+						System.out.println("nb1 = " + nb1 + " / nb2 = " + nb2);
+
+						tab_nombre.set(placediv, String.valueOf(tamp_res));
+						tab_nombre.remove(apdiv);
+						tab_signe.remove(placediv);
+					}
+				}
+				else if(placefois != -1 && placediv == -1)
 				{
 					nb1 = Float.parseFloat(tab_nombre.get(placefois));
 					nb2 = Float.parseFloat(tab_nombre.get(apfois));
 					tamp_res = nb1 * nb2;
 					System.out.println("nb1 = " + nb1 + " / nb2 = " + nb2);
 
-					tab_nombre.add(placefois, String.valueOf(tamp_res));
+					tab_nombre.set(placefois, String.valueOf(tamp_res));
 					tab_nombre.remove(apfois);
 					tab_signe.remove(placefois);
-
 				}
-				else if(placediv != -1)
+				else if(placefois == -1 && placediv != -1)
 				{
 					nb1 = Float.parseFloat(tab_nombre.get(placediv));
 					nb2 = Float.parseFloat(tab_nombre.get(apdiv));
 					tamp_res = nb1 / nb2;
 					System.out.println("nb1 = " + nb1 + " / nb2 = " + nb2);
 
-					tab_nombre.add(placediv, String.valueOf(tamp_res));
+					tab_nombre.set(placediv, String.valueOf(tamp_res));
 					tab_nombre.remove(apdiv);
 					tab_signe.remove(placediv);
 				}
@@ -227,7 +295,7 @@ public class Fenetre extends JFrame implements ActionListener {
 						tamp_res = nb1 + nb2;
 						System.out.println("nb1 = " + nb1 + " / nb2 = " + nb2);
 
-						tab_nombre.add(placeplus, String.valueOf(tamp_res));
+						tab_nombre.set(placeplus, String.valueOf(tamp_res));
 						tab_nombre.remove(applus);
 						tab_signe.remove(placeplus);
 					}
@@ -238,7 +306,7 @@ public class Fenetre extends JFrame implements ActionListener {
 						tamp_res = nb1 - nb2;
 						System.out.println("nb1 = " + nb1 + " / nb2 = " + nb2);
 
-						tab_nombre.add(placemoins, String.valueOf(tamp_res));
+						tab_nombre.set(placemoins, String.valueOf(tamp_res));
 						tab_nombre.remove(apmoins);
 						tab_signe.remove(placemoins);
 					}
@@ -250,7 +318,7 @@ public class Fenetre extends JFrame implements ActionListener {
 					tamp_res = nb1 + nb2;
 					System.out.println("nb1 = " + nb1 + " / nb2 = " + nb2);
 
-					tab_nombre.add(placeplus, String.valueOf(tamp_res));
+					tab_nombre.set(placeplus, String.valueOf(tamp_res));
 					tab_nombre.remove(applus);
 					tab_signe.remove(placeplus);
 				}
@@ -261,28 +329,17 @@ public class Fenetre extends JFrame implements ActionListener {
 					tamp_res = nb1 - nb2;
 					System.out.println("nb1 = " + nb1 + " / nb2 = " + nb2);
 
-					tab_nombre.add(placemoins, String.valueOf(tamp_res));
+					tab_nombre.set(placemoins, String.valueOf(tamp_res));
 					tab_nombre.remove(apmoins);
 					tab_signe.remove(placemoins);
 				}
-
-
-
 				System.out.println("résultat = " + tamp_res);
-
 				resultat = String.valueOf(tamp_res);
 				txt_rep.setText(resultat);
-
-
-
 			}
-
 			tab_signe.clear();
 			tab_nombre.clear();
 		}
-
-
-
 	}
 }
 
