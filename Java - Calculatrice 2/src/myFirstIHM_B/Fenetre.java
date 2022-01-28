@@ -53,7 +53,7 @@ public class Fenetre extends JFrame implements ActionListener {
 
 		//dimension boutons
 		Dimension dim = new Dimension(50,50);
-		char txt_b[] = new char[] {'7','8','9','4','5','6','1','2','3','0',',','c'};
+		char txt_b[] = new char[] {'7','8','9','4','5','6','1','2','3','0',' ','c'};
 		char txt_s[] = new char[] {'/','*','-','+','='};
 		length_tab = txt_b.length;
 		JButton calc_button [] = new JButton[txt_b.length];
